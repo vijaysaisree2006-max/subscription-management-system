@@ -1,0 +1,221 @@
+// Prisma schema generated from existing schema.sql
+// Do NOT modify schema.sql. This file represents the current DB structure.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+enum ProductType {
+  SaaS_Subscription
+  Professional_Service
+  Usage_Addon
+}
+
+enum PlanCycle {
+  Daily
+  Weekly
+  Monthly
+  Yearly
+}
+
+enum SubscriptionStatus {
+  draft
+  quotation
+  confirmed
+  active
+  closed
+}
+
+enum InvoiceStatus {
+  draft
+  confirmed
+  paid
+}
+
+enum PaymentStatus {
+  succeeded
+  pending
+  failed
+}
+
+enum DiscountType {
+  percentage
+  fixed
+}
+
+model Profile {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  full_name    String
+  role         Role
+  department   String?
+  company_name String?
+  is_suspended Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Relations
+  subscriptions Subscription[] @relation("CustomerSubscriptions")
+  invoices      Invoice[]       @relation("CustomerInvoices")
+  payments      Payment[]       @relation("CustomerPayments")
+  // discounts relation removed; discounts are global codes not tied to a profile
+  audit_logs   AuditLog[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  type        ProductType
+  sales_price Decimal  @db.Decimal(12, 2)
+  cost_price  Decimal  @db.Decimal(12, 2) @default(0.00)
+  description String?
+  is_archived Boolean  @default(false)
+  variants    String[] @default([])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // Relations
+  plans Plan[]
+}
+
+model Plan {
+  id           String   @id @default(uuid())
+  product_id   String
+  product      Product  @relation(fields: [product_id], references: [id])
+  name         String
+  cycle        PlanCycle
+  price        Decimal  @db.Decimal(12, 2)
+  currency     String   @default("USD")
+  min_quantity Int      @default(1)
+  trial_days   Int      @default(0)
+  pause_allowed Boolean @default(true)
+  auto_close_days Int @default(15)
+  is_active    Boolean @default(true)
+  created_at   DateTime @default(now())
+
+  // Relations
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                String   @id @default(uuid())
+  customer_id       String?
+  customer          Profile? @relation("CustomerSubscriptions", fields: [customer_id], references: [id])
+  company_name      String
+  customer_name     String
+  email             String
+  plan_id           String
+  plan              Plan     @relation(fields: [plan_id], references: [id])
+  plan_name         String
+  product_name      String
+  billing_cycle     PlanCycle
+  amount            Decimal  @db.Decimal(12, 2)
+  currency          String   @default("USD")
+  status            SubscriptionStatus @default(draft)
+  is_paused         Boolean @default(false)
+  start_date        DateTime @default(now())
+  current_period_end DateTime
+  auto_renew        Boolean @default(true)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  // Relations
+  invoices Invoice[]
+}
+
+model Invoice {
+  id               String   @id @default(uuid())
+  subscription_id  String?
+  subscription     Subscription? @relation(fields: [subscription_id], references: [id])
+  customer_id      String?
+  customer         Profile? @relation("CustomerInvoices", fields: [customer_id], references: [id])
+  customer_name    String
+  customer_email   String
+  subtotal         Decimal  @db.Decimal(12, 2)
+  discount_amount  Decimal  @db.Decimal(12, 2) @default(0.00)
+  tax_amount       Decimal  @db.Decimal(12, 2) @default(0.00)
+  amount           Decimal  @db.Decimal(12, 2)
+  currency         String   @default("USD")
+  status           InvoiceStatus @default(confirmed)
+  issued_date      DateTime @default(now())
+  due_date         DateTime
+  paid_date        DateTime?
+  payment_ref      String?
+  created_at       DateTime @default(now())
+
+  // Relations
+  items InvoiceItem[]
+  payments Payment[]
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  invoice_id  String
+  invoice     Invoice  @relation(fields: [invoice_id], references: [id])
+  description String
+  quantity    Int      @default(1)
+  unit_price  Decimal  @db.Decimal(12, 2)
+  total       Decimal  @db.Decimal(12, 2)
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  invoice_id    String?
+  invoice       Invoice? @relation(fields: [invoice_id], references: [id])
+  customer_id   String?
+  customer      Profile? @relation("CustomerPayments", fields: [customer_id], references: [id])
+  customer_name String
+  customer_email String
+  amount        Decimal @db.Decimal(12, 2)
+  currency      String  @default("USD")
+  method        String
+  status        PaymentStatus
+  gateway_ref   String?
+  created_at    DateTime @default(now())
+}
+
+model Discount {
+  id                 String   @id @default(uuid())
+  code               String   @unique
+  type               DiscountType
+  value              Decimal @db.Decimal(12, 2)
+  applicable_product String   @default("All Products")
+  valid_until        DateTime?
+  max_uses           Int      @default(100)
+  used_count         Int      @default(0)
+  description        String?
+  is_active          Boolean  @default(true)
+  created_at         DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  user_id     String?
+  user        Profile? @relation(fields: [user_id], references: [id])
+  user_email  String?
+  action      String
+  entity_type String
+  entity_id   String
+  payload     Json?
+  created_at  DateTime @default(now())
+}
+
+// Authentication user model (separate from supabase profiles)
+model AuthUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CUSTOMER)
+  created_at   DateTime @default(now())
+}

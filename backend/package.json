@@ -9,6 +9,10 @@
     "dev": "node --watch src/index.js"
   },
   "dependencies": {
+    "prisma": "^5.15.0",
+    "@prisma/client": "^5.15.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
     "@supabase/supabase-js": "^2.49.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

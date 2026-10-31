@@ -1,15 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import {
   Search,
-  Filter,
   ArrowUpDown,
-  MoreHorizontal,
   Plus,
-  RefreshCw,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
-  ShieldCheck,
   AlertCircle
 } from 'lucide-react';
 
@@ -95,26 +90,26 @@ export default function SubscriptionTable({
     switch (status) {
       case 'active':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-2xs text-[10px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
             Active
           </span>
         );
       case 'trialing':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[11px] font-medium bg-sky-50 text-sky-700 border border-sky-200">
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-2xs text-[10px] font-medium bg-sky-50 text-sky-800 border border-sky-200">
             Trialing
           </span>
         );
       case 'past_due':
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-2xs text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
             Past Due
           </span>
         );
       case 'canceled':
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-sm text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded-2xs text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
             Canceled
           </span>
         );
@@ -122,35 +117,37 @@ export default function SubscriptionTable({
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-md shadow-xs overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-sm shadow-2xs overflow-hidden">
       {/* Table Header and Toolbar */}
-      <div className="p-3.5 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+      <div className="p-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-semibold text-slate-900">Subscription Portfolio</h2>
-            <span className="text-xs text-slate-500 font-normal">
-              ({totalRecords} {totalRecords === 1 ? 'record' : 'records'})
+            <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+              Recent Subscriptions
+            </h2>
+            <span className="text-[11px] font-mono text-slate-500">
+              ({totalRecords} {totalRecords === 1 ? 'contract' : 'contracts'})
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Active customer recurring contracts, terms, and billing cycles.
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Customer recurring accounts, product tiers, and automated renewal dates
           </p>
         </div>
 
         {/* Toolbar: Search + Filters + Action */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {/* Search */}
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3 h-3 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              placeholder="Filter by account, ID, plan..."
+              placeholder="Search account, ID, plan..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-sm focus:outline-hidden focus:ring-1 focus:ring-slate-900 focus:bg-white text-slate-800 placeholder-slate-400 w-52 sm:w-60"
+              className="pl-7 pr-2.5 py-1 text-xs bg-slate-50 border border-slate-200 rounded-2xs focus:outline-hidden focus:ring-1 focus:ring-slate-900 focus:bg-white text-slate-800 placeholder-slate-400 w-44 sm:w-52"
             />
           </div>
 
@@ -161,7 +158,7 @@ export default function SubscriptionTable({
               onStatusFilterChange(e.target.value);
               setCurrentPage(1);
             }}
-            className="text-xs bg-slate-50 border border-slate-200 rounded-sm px-2.5 py-1.5 text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-slate-900"
+            className="text-xs bg-slate-50 border border-slate-200 rounded-2xs px-2 py-1 text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-slate-900 cursor-pointer"
           >
             <option value="ALL">All Statuses</option>
             <option value="active">Active</option>
@@ -177,7 +174,7 @@ export default function SubscriptionTable({
               setCycleFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="text-xs bg-slate-50 border border-slate-200 rounded-sm px-2.5 py-1.5 text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-slate-900"
+            className="text-xs bg-slate-50 border border-slate-200 rounded-2xs px-2 py-1 text-slate-700 focus:outline-hidden focus:ring-1 focus:ring-slate-900 cursor-pointer"
           >
             <option value="ALL">All Cycles</option>
             <option value="Monthly">Monthly</option>
@@ -188,9 +185,9 @@ export default function SubscriptionTable({
           <button
             type="button"
             onClick={onOpenCreateModal}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-sm shadow-xs transition-colors"
+            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-2xs shadow-2xs transition-colors cursor-pointer"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3 h-3" />
             <span>Create Subscription</span>
           </button>
         </div>
@@ -203,55 +200,55 @@ export default function SubscriptionTable({
             <tr>
               <th
                 onClick={() => handleSort('id')}
-                className="px-3.5 py-2.5 cursor-pointer hover:text-slate-900 whitespace-nowrap"
+                className="px-3 py-2 cursor-pointer hover:text-slate-900 whitespace-nowrap"
               >
                 <div className="flex items-center gap-1">
-                  <span>Subscription ID</span>
+                  <span>Contract ID</span>
                   <ArrowUpDown className="w-3 h-3 text-slate-400" />
                 </div>
               </th>
               <th
                 onClick={() => handleSort('companyName')}
-                className="px-3.5 py-2.5 cursor-pointer hover:text-slate-900 whitespace-nowrap"
+                className="px-3 py-2 cursor-pointer hover:text-slate-900 whitespace-nowrap"
               >
                 <div className="flex items-center gap-1">
-                  <span>Customer & Company</span>
+                  <span>Account & Contact</span>
                   <ArrowUpDown className="w-3 h-3 text-slate-400" />
                 </div>
               </th>
-              <th className="px-3.5 py-2.5 whitespace-nowrap">Plan Tier</th>
-              <th className="px-3.5 py-2.5 whitespace-nowrap">Billing Terms</th>
+              <th className="px-3 py-2 whitespace-nowrap">Plan & Product</th>
+              <th className="px-3 py-2 whitespace-nowrap">Billing Terms</th>
               <th
                 onClick={() => handleSort('amount')}
-                className="px-3.5 py-2.5 text-right cursor-pointer hover:text-slate-900 whitespace-nowrap"
+                className="px-3 py-2 text-right cursor-pointer hover:text-slate-900 whitespace-nowrap"
               >
                 <div className="flex items-center justify-end gap-1">
-                  <span>Amount</span>
+                  <span>Contract Value</span>
                   <ArrowUpDown className="w-3 h-3 text-slate-400" />
                 </div>
               </th>
-              <th className="px-3.5 py-2.5 whitespace-nowrap">Status</th>
+              <th className="px-3 py-2 whitespace-nowrap">Status</th>
               <th
                 onClick={() => handleSort('currentPeriodEnd')}
-                className="px-3.5 py-2.5 cursor-pointer hover:text-slate-900 whitespace-nowrap"
+                className="px-3 py-2 cursor-pointer hover:text-slate-900 whitespace-nowrap"
               >
                 <div className="flex items-center gap-1">
-                  <span>Current Period End</span>
+                  <span>Period End</span>
                   <ArrowUpDown className="w-3 h-3 text-slate-400" />
                 </div>
               </th>
-              <th className="px-3.5 py-2.5 text-right whitespace-nowrap">Actions</th>
+              <th className="px-3 py-2 text-right whitespace-nowrap">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-12 text-center">
+                <td colSpan={8} className="px-4 py-8 text-center">
                   <div className="max-w-xs mx-auto text-center">
-                    <AlertCircle className="w-6 h-6 text-slate-400 mx-auto mb-2" />
-                    <p className="text-xs font-semibold text-slate-800">No matching subscriptions</p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      No records match the current filter criteria or search keyword.
+                    <AlertCircle className="w-5 h-5 text-slate-400 mx-auto mb-1.5" />
+                    <p className="text-xs font-medium text-slate-800">No matching subscriptions</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      No records match the selected filter criteria.
                     </p>
                     <button
                       type="button"
@@ -260,71 +257,71 @@ export default function SubscriptionTable({
                         onStatusFilterChange('ALL');
                         setCycleFilter('ALL');
                       }}
-                      className="mt-3 text-xs text-slate-900 font-medium underline hover:text-slate-700"
+                      className="mt-2 text-xs text-slate-900 font-medium underline hover:text-slate-700 cursor-pointer"
                     >
-                      Reset all filters
+                      Reset filters
                     </button>
                   </div>
                 </td>
               </tr>
             ) : (
               paginatedData.map((sub) => (
-                <tr key={sub.id} className="hover:bg-slate-50/70 transition-colors">
+                <tr key={sub.id} className="hover:bg-slate-50/80 transition-colors">
                   {/* ID */}
-                  <td className="px-3.5 py-2.5 font-mono text-[11px] text-slate-700 font-medium">
+                  <td className="px-3 py-2 font-mono text-[11px] text-slate-800 font-medium whitespace-nowrap">
                     {sub.id}
                   </td>
 
                   {/* Customer */}
-                  <td className="px-3.5 py-2.5">
+                  <td className="px-3 py-2">
                     <div className="font-medium text-slate-900">{sub.companyName}</div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-[10px] text-slate-500 font-mono">
                       {sub.customerName} • {sub.email}
                     </div>
                   </td>
 
                   {/* Plan */}
-                  <td className="px-3.5 py-2.5">
+                  <td className="px-3 py-2">
                     <div className="font-medium text-slate-800">{sub.planName}</div>
-                    <div className="text-[11px] text-slate-500">{sub.productName}</div>
+                    <div className="text-[10px] text-slate-500">{sub.productName}</div>
                   </td>
 
                   {/* Billing */}
-                  <td className="px-3.5 py-2.5">
+                  <td className="px-3 py-2">
                     <span className="text-[11px] font-medium text-slate-700">
                       {sub.billingCycle}
                     </span>
-                    <span className="text-[10px] text-slate-400 block">
-                      {sub.autoRenew ? 'Auto-renews' : 'Manual renewal'}
+                    <span className="text-[10px] text-slate-400 block font-mono">
+                      {sub.autoRenew ? 'Auto-renews' : 'Manual'}
                     </span>
                   </td>
 
                   {/* Amount */}
-                  <td className="px-3.5 py-2.5 text-right font-medium text-slate-900 tabular-nums">
+                  <td className="px-3 py-2 text-right font-medium text-slate-900 font-mono tabular-nums whitespace-nowrap">
                     ${sub.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
 
                   {/* Status */}
-                  <td className="px-3.5 py-2.5">{renderStatusBadge(sub.status)}</td>
+                  <td className="px-3 py-2 whitespace-nowrap">{renderStatusBadge(sub.status)}</td>
 
                   {/* Period End */}
-                  <td className="px-3.5 py-2.5 text-slate-600 tabular-nums">
+                  <td className="px-3 py-2 text-slate-600 font-mono text-[11px] tabular-nums whitespace-nowrap">
                     {sub.currentPeriodEnd}
                   </td>
 
                   {/* Actions */}
-                  <td className="px-3.5 py-2.5 text-right">
+                  <td className="px-3 py-2 text-right whitespace-nowrap">
                     {sub.status !== 'canceled' ? (
                       <button
                         type="button"
                         onClick={() => onCancelSubscription?.(sub.id)}
-                        className="text-[11px] font-medium text-slate-600 hover:text-rose-700 hover:bg-slate-100 px-2 py-1 rounded-sm border border-slate-200 transition-colors"
-                        title="Cancel this recurring contract"
+                        className="text-[10px] font-medium text-slate-600 hover:text-rose-700 hover:bg-slate-100 px-1.5 py-0.5 rounded-2xs border border-slate-200 transition-colors cursor-pointer"
+                        title="Cancel recurring contract"
                       >
                         Cancel
                       </button>
                     ) : (
-                      <span className="text-[11px] text-slate-400">Ended</span>
+                      <span className="text-[10px] text-slate-400 font-mono">Terminated</span>
                     )}
                   </td>
                 </tr>
@@ -335,7 +332,7 @@ export default function SubscriptionTable({
       </div>
 
       {/* Pagination Footer */}
-      <div className="px-3.5 py-2.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-600">
+      <div className="px-3 py-2 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-[11px] text-slate-600">
         <div>
           Showing{' '}
           <span className="font-semibold text-slate-900">
@@ -345,7 +342,7 @@ export default function SubscriptionTable({
           <span className="font-semibold text-slate-900">
             {Math.min(currentPage * pageSize, totalRecords)}
           </span>{' '}
-          of <span className="font-semibold text-slate-900">{totalRecords}</span> entries
+          of <span className="font-semibold text-slate-900">{totalRecords}</span> contracts
         </div>
 
         <div className="flex items-center gap-1">
@@ -353,22 +350,22 @@ export default function SubscriptionTable({
             type="button"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            className="p-1 rounded-sm border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="p-1 rounded-2xs border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             aria-label="Previous page"
           >
-            <ChevronLeft className="w-3.5 h-3.5" />
+            <ChevronLeft className="w-3 h-3" />
           </button>
-          <span className="px-2 text-xs font-medium text-slate-700">
-            Page {currentPage} of {totalPages}
+          <span className="px-1.5 text-[11px] font-medium text-slate-700 font-mono">
+            {currentPage}/{totalPages}
           </span>
           <button
             type="button"
             disabled={currentPage >= totalPages}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            className="p-1 rounded-sm border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="p-1 rounded-2xs border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             aria-label="Next page"
           >
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-3 h-3" />
           </button>
         </div>
       </div>
