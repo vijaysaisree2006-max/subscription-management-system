@@ -19,7 +19,7 @@ npm run dev
 ```
 
 Once started, open your browser at:
-👉 **[http://localhost:5173](http://localhost:5173)**
+
 
 To build for production:
 ```powershell
